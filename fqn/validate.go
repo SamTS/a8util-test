@@ -17,14 +17,17 @@ func Validate(fullyQualifiedName string) error {
 
 	var errorMessages []string
 
+	const min = 2
+	const max = 30
+
 	// fn can't have a function or app name more than 30 characters
-	if len(fnName) > 30 || len(fnName) < 3 {
-		errorMessage := fmt.Sprintf("Function must be between 3 and 30 characters inclusive, current length is %d", len(fnName))
+	if len(fnName) > max || len(fnName) < min {
+		errorMessage := fmt.Sprintf("Function must be between %d and %d characters inclusive, current length is %d", min, max, len(fnName))
 		errorMessages = append(errorMessages, errorMessage)
 	}
 
-	if len(appName) > 30 || len(appName) < 3 {
-		errorMessage := fmt.Sprintf("App name must be between 3 and 30 characters inclusive, current length is %d", len(appName))
+	if len(appName) > max || len(appName) < min {
+		errorMessage := fmt.Sprintf("App name must be between %d and %d characters inclusive, current length is %d", min, max, len(appName))
 		errorMessages = append(errorMessages, errorMessage)
 	}
 
