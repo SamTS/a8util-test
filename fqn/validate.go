@@ -3,6 +3,8 @@ package fqn
 import (
 	"errors"
 	"fmt"
+	"log"
+	"regexp"
 	"strings"
 )
 
@@ -17,22 +19,61 @@ func Validate(fullyQualifiedName string) error {
 
 	var errorMessages []string
 
-	const min = 2
-	const max = 30
-
 	// fn can't have a function or app name more than 30 characters
-	if len(fnName) > max || len(fnName) < min {
-		errorMessage := fmt.Sprintf("Function must be between %d and %d characters inclusive, current length is %d", min, max, len(fnName))
-		errorMessages = append(errorMessages, errorMessage)
+	err = CheckLength(fnName)
+	if err != nil {
+		errorMessages = append(errorMessages, "Function "+err.Error())
 	}
 
-	if len(appName) > max || len(appName) < min {
-		errorMessage := fmt.Sprintf("App name must be between %d and %d characters inclusive, current length is %d", min, max, len(appName))
-		errorMessages = append(errorMessages, errorMessage)
+	err = CheckLength(appName)
+	if err != nil {
+		errorMessages = append(errorMessages, "Namespace "+err.Error())
+	}
+
+	// fn and docker can't have names that have upper case or interesting characters in them
+	err = CheckCharacters(fnName)
+	if err != nil {
+		errorMessages = append(errorMessages, "Function "+err.Error())
+	}
+
+	err = CheckCharacters(appName)
+	if err != nil {
+		errorMessages = append(errorMessages, "Namespace "+err.Error())
 	}
 
 	if len(errorMessages) > 0 {
-		return errors.New(strings.Join(errorMessages, ", "))
+		return errors.New(strings.Join(errorMessages, "\n"))
+	}
+
+	return nil
+}
+
+func CheckLength(msg string) error {
+	const min = 2
+	const max = 30
+
+	if len(msg) > max || len(msg) < min {
+		return errors.New(fmt.Sprintf("name must be between %d and %d characters inclusive, current length is %d", min, max, len(msg)))
+	}
+
+	return nil
+}
+
+func CheckCharacters(msg string) error {
+
+	lowerString := strings.ToLower(msg)
+
+	reg, err := regexp.Compile("[^a-z0-9_]+")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	processedString := reg.ReplaceAllString(lowerString, "")
+
+	validated := processedString == msg
+
+	if !validated {
+		return errors.New("characters may only be lowercase, digits and '_'")
 	}
 
 	return nil
