@@ -1,4 +1,4 @@
-module gitlab.com/autom8.network/go-a8-util
+module github.com/SamTS/a8util-test
 
 go 1.12
 
