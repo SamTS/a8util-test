@@ -13,7 +13,7 @@ func Parse(fullyQualifiedName string) (string, string, error) {
 	fqnArray := strings.Split(fullyQualifiedName, ".")
 
 	if len(fqnArray) != 2 {
-		return "", "", fmt.Errorf("Please change the format of '%s' to 'namespace.function' where namespace and function contiain no periods", fullyQualifiedName)
+		return "", "", fmt.Errorf("Please change the formnat of '%s' to 'namespace.function' where namespace and function contiain no periods", fullyQualifiedName)
 	}
 
 	appName := fqnArray[0]
